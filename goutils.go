@@ -61,9 +61,17 @@ type TypeCallers struct {
 	Bytes   func([]byte)
 	Float64 func(float64)
 	Float32 func(float32)
+	Unknown func(interface{})
 }
 
 func OnType(a interface{}, caller *TypeCallers) {
+
+	if !IsBasicType(a) {
+		if caller.Unknown != nil {
+			caller.Unknown(a)
+		}
+	}
+
 	if val, err := ByteListMorph(a); err == nil {
 		if caller.Bytes != nil {
 			caller.Bytes(val)
@@ -140,6 +148,7 @@ func OnType(a interface{}, caller *TypeCallers) {
 			caller.UInt(val)
 		}
 	}
+
 }
 
 func IsBasicType(a interface{}) bool {
