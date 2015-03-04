@@ -63,7 +63,7 @@ type TypeCallers struct {
 	Float32 func(float32)
 }
 
-func OnType(a interface{}, caller TypeCallers) {
+func OnType(a interface{}, caller *TypeCallers) {
 	if val, err := ByteListMorph(a); err == nil {
 		if caller.Bytes != nil {
 			caller.Bytes(val)

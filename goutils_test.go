@@ -27,3 +27,16 @@ func TestBytes(t *testing.T) {
 	}
 
 }
+
+func TestCallers(t *testing.T) {
+	var item interface{}
+	item = 70
+
+	stack := new(TypeCallers)
+
+	stack.Int = func(data int) {
+		t.Logf("Passed for int call %d %d", data, item)
+	}
+
+	OnType(item, stack)
+}
