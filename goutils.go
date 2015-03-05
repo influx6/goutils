@@ -94,6 +94,10 @@ func (s *String) String() string {
 	return s.Value
 }
 
+func NewString(a string) *String {
+	return &String{a}
+}
+
 type StringMorpher struct {
 	buffer    *String
 	converter *TypeCallers
