@@ -1,8 +1,16 @@
 package goutils
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"reflect"
+)
+
+var (
+	MorphString = NewStringMorpher()
+	MorphByte   = NewByteMorpher()
 )
 
 // Equal is a helper for comparing value equality, following these rules:
@@ -11,6 +19,7 @@ import (
 //    for example, Equal(int32(5), int64(5)) == true
 //  - strings and byte slices are converted to strings before comparison.
 //  - else, return false.
+
 func Equal(a, b interface{}) bool {
 	if reflect.TypeOf(a) == reflect.TypeOf(b) {
 		return reflect.DeepEqual(a, b)
@@ -64,91 +73,199 @@ type TypeCallers struct {
 	Unknown func(interface{})
 }
 
-func OnType(a interface{}, caller *TypeCallers) {
+type ByteMorpher struct {
+	StringMorph *StringMorpher
+}
 
-	if !IsBasicType(a) {
-		if caller.Unknown != nil {
-			caller.Unknown(a)
-		}
+func (b *ByteMorpher) Morph(a interface{}) []byte {
+	val := b.StringMorph.Morph(a)
+	return []byte(val)
+}
+
+func NewByteMorpher() *ByteMorpher {
+	return &ByteMorpher{NewStringMorpher()}
+}
+
+type String struct {
+	Value string
+}
+
+func (s *String) String() string {
+	return s.Value
+}
+
+type StringMorpher struct {
+	buffer    *String
+	converter *TypeCallers
+}
+
+func (s *StringMorpher) Morph(a interface{}) string {
+	OnType(a, s.converter)
+	return s.buffer.Value
+}
+
+func NewStringMorpher() *StringMorpher {
+	val := &String{""}
+	conv := NewStringConverter(val)
+	return &StringMorpher{val, conv}
+}
+
+func NewStringConverter(val *String) *TypeCallers {
+	return &TypeCallers{
+		func(item int) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item uint) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item int8) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item uint8) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item int16) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item uint16) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item int32) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item uint32) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item int64) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item uint64) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item string) {
+			val.Value = item
+		},
+		func(item byte) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item []byte) {
+			val.Value = string(item)
+		},
+		func(item float64) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item float32) {
+			val.Value = fmt.Sprint(item)
+		},
+		func(item interface{}) {
+			conv, err := json.Marshal(item)
+
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			val.Value = string(conv)
+		},
 	}
+}
 
+func OnType(a interface{}, caller *TypeCallers) {
 	if val, err := ByteListMorph(a); err == nil {
 		if caller.Bytes != nil {
 			caller.Bytes(val)
 		}
+		return
 	}
 
 	if val, err := ByteMorph(a); err == nil {
 		if caller.Byte != nil {
 			caller.Byte(val)
 		}
+		return
 	}
 	if val, err := StringMorph(a); err == nil {
 		if caller.String != nil {
 			caller.String(val)
 		}
+		return
 	}
 	if val, err := Float32Morph(a); err == nil {
 		if caller.Float32 != nil {
 			caller.Float32(val)
 		}
+		return
 	}
 	if val, err := Float64Morph(a); err == nil {
 		if caller.Float64 != nil {
 			caller.Float64(val)
 		}
+		return
 	}
 	if val, err := Int64Morph(a); err == nil {
 		if caller.Int64 != nil {
 			caller.Int64(val)
 		}
+		return
 	}
 	if val, err := UInt64Morph(a); err == nil {
 		if caller.UInt64 != nil {
 			caller.UInt64(val)
 		}
+		return
 	}
 	if val, err := Int32Morph(a); err == nil {
 		if caller.Int32 != nil {
 			caller.Int32(val)
 		}
+		return
 	}
 	if val, err := UInt32Morph(a); err == nil {
 		if caller.UInt32 != nil {
 			caller.UInt32(val)
 		}
+		return
 	}
 	if val, err := Int16Morph(a); err == nil {
 		if caller.Int16 != nil {
 			caller.Int16(val)
 		}
+		return
 	}
 	if val, err := UInt16Morph(a); err == nil {
 		if caller.UInt16 != nil {
 			caller.UInt16(val)
 		}
+		return
 	}
 	if val, err := Int8Morph(a); err == nil {
 		if caller.Int8 != nil {
 			caller.Int8(val)
 		}
+		return
 	}
 	if val, err := UInt8Morph(a); err == nil {
 		if caller.UInt8 != nil {
 			caller.UInt8(val)
 		}
+		return
 	}
 	if val, err := IntMorph(a); err == nil {
 		if caller.Int != nil {
 			caller.Int(val)
 		}
+		return
 	}
 	if val, err := UIntMorph(a); err == nil {
 		if caller.UInt != nil {
 			caller.UInt(val)
 		}
+		return
 	}
 
+	if caller.Unknown != nil {
+		caller.Unknown(a)
+	}
 }
 
 func IsBasicType(a interface{}) bool {

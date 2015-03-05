@@ -40,3 +40,13 @@ func TestCallers(t *testing.T) {
 
 	OnType(item, stack)
 }
+
+func TestString(t *testing.T) {
+	var item interface{} = 1000
+	morph := NewStringMorpher()
+	val := morph.Morph(item)
+
+	if val != "1000" {
+		t.Fatalf("expecting `1000` but got incorrect value", val, morph, item)
+	}
+}
