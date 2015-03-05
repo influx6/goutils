@@ -74,11 +74,11 @@ type TypeCallers struct {
 }
 
 type ByteMorpher struct {
-	StringMorph *StringMorpher
+	stringmorph *StringMorpher
 }
 
 func (b *ByteMorpher) Morph(a interface{}) []byte {
-	val := b.StringMorph.Morph(a)
+	val := b.stringmorph.Morph(a)
 	return []byte(val)
 }
 
