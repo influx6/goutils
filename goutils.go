@@ -68,6 +68,12 @@ func (m *Map) HasMatch(key, value interface{}) bool {
 	return false
 }
 
+func (m *Map) Each(fn func(val, key interface{})) {
+	for k, v := range m.Map() {
+		fn(v, k)
+	}
+}
+
 func (m *Map) Clone(src *Map) {
 	for k, v := range src.Map() {
 		m.Set(k, v)
