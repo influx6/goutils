@@ -54,6 +54,26 @@ func Equal(a, b interface{}) bool {
 	return false
 }
 
+type Map struct {
+	internal map[interface{}]interface{}
+}
+
+func (m *Map) Get(key interface{}) interface{} {
+	return m.internal[key]
+}
+
+func (m *Map) Set(key, value interface{}) {
+	m.internal[key] = value
+}
+
+func (m *Map) Remove(key, value interface{}) {
+	delete(m.internal, key)
+}
+
+func (m *Map) Map() map[interface{}]interface{} {
+	return m.internal
+}
+
 type TypeCallers struct {
 	Int     func(int)
 	UInt    func(uint)
