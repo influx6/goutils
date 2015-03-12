@@ -50,3 +50,23 @@ func TestString(t *testing.T) {
 		t.Fatalf("expecting `1000` but got incorrect value", val, morph, item)
 	}
 }
+
+func TestMap(t *testing.T) {
+	store := NewMap()
+
+	store.Set("day", "build")
+
+	if !store.Has("day") {
+		t.Fatalf("expecting `true` but got false", store, "day")
+	}
+
+	if !store.HasMatch("day", "build") {
+		t.Fatalf("expecting `true` but got false", store, "day")
+	}
+
+	store.Remove("day")
+
+	if store.Has("day") {
+		t.Fatalf("expecting `false` but got true", store, "day")
+	}
+}

@@ -58,6 +58,21 @@ type Map struct {
 	internal map[interface{}]interface{}
 }
 
+func (m *Map) HasMatch(key, value interface{}) bool {
+	k, ok := m.internal[key]
+
+	if ok {
+		return k == value
+	}
+
+	return false
+}
+
+func (m *Map) Has(key interface{}) bool {
+	_, ok := m.internal[key]
+	return ok
+}
+
 func (m *Map) Get(key interface{}) interface{} {
 	return m.internal[key]
 }
@@ -66,12 +81,16 @@ func (m *Map) Set(key, value interface{}) {
 	m.internal[key] = value
 }
 
-func (m *Map) Remove(key, value interface{}) {
+func (m *Map) Remove(key interface{}) {
 	delete(m.internal, key)
 }
 
 func (m *Map) Map() map[interface{}]interface{} {
 	return m.internal
+}
+
+func NewMap() *Map {
+	return &Map{make(map[interface{}]interface{})}
 }
 
 type TypeCallers struct {
