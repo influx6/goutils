@@ -68,6 +68,18 @@ func (m *Map) HasMatch(key, value interface{}) bool {
 	return false
 }
 
+func (m *Map) Clone(src *Map) {
+	for k, v := range src.Map() {
+		m.Set(k, v)
+	}
+}
+
+func (m *Map) Copy(src map[interface{}]interface{}) {
+	for k, v := range src {
+		m.Set(k, v)
+	}
+}
+
 func (m *Map) Has(key interface{}) bool {
 	_, ok := m.internal[key]
 	return ok
