@@ -11,11 +11,13 @@ Then
 ##Utilites
 
  - Equal(a,b interface{}) bool
-    Using abit of reflection it checks equality between golangs base types int,string,..etc
+
+Using abit of reflection it checks equality between golangs base types int,string,..etc
 
 
  - TypeCallers
-    I needed a means of checking basic types but more than that to be notified by a callback depending on the basic type without having to write long lines of type assertions. TypeCallers is a struct with a attributes named after its basic type and each is a function which will be called when the data given to it matches or else the `unknown` caller is called.
+
+I needed a means of checking basic types but more than that to be notified by a callback depending on the basic type without having to write long lines of type assertions. TypeCallers is a struct with a attributes named after its basic type and each is a function which will be called when the data given to it matches or else the `unknown` caller is called.
 
     
             type TypeCallers struct {
@@ -42,7 +44,8 @@ Then
 
 
  - NewStringMorpher() *StringMorpher 
-    StringMorpher creates a struct called the stringmorpher that standardizes what NewStringConverter does but allows a better synchronouze method call like below:
+
+StringMorpher creates a struct called the stringmorpher that standardizes what NewStringConverter does but allows a better synchronouze method call like below:
 
         
         
@@ -54,7 +57,8 @@ Then
     
 
  - NewByteMorpher() *ByteMorpher 
-    Heck whats the use of being able to turn anything possible stringable type into a string with StringMorpher if you cant turn that into a byte along the side. This creates a new Morpher off of StringMorpher and takes all the result of StringMorpher and transforms them into []bytes. You can say it composes `StringMorpher` into a `ByteMorpher`
+
+Heck whats the use of being able to turn anything possible stringable type into a string with StringMorpher if you cant turn that into a byte along the side. This creates a new Morpher off of StringMorpher and takes all the result of StringMorpher and transforms them into []bytes. You can say it composes `StringMorpher` into a `ByteMorpher`
 
         
             morph := NewByteMorpher()
@@ -64,17 +68,21 @@ Then
 
 
  - NewStringConverter(val *String) *TypeCallers 
-    To make life easier this method auto-generates a TypeCaller for converting all the basic type into their string version,when it encounters the unknown state,it uses the json:encoder to marshall it incase if its a struct and if this fails well...(sorry ,no string for you :p) .
+
+To make life easier this method auto-generates a TypeCaller for converting all the basic type into their string version,when it encounters the unknown state,it uses the json:encoder to marshall it incase if its a struct and if this fails well...(sorry ,no string for you :p) .
         
 
  - OnType(a interface}, caller *TypeCallers) 
-    This method takes a value of interface{} and a TypeCaller and tells the caller to call the appropriate function based on the inferred type
+
+This method takes a value of interface{} and a TypeCaller and tells the caller to call the appropriate function based on the inferred type
 
  - IsBasicType(a interface}) bool 
-        This method passes its value to all available ValueMorphers and returns true or false if it is a basic types
+
+This method passes its value to all available ValueMorphers and returns true or false if it is a basic types
 
  - ValueMorphers
-    ValueMorphers are cool,they are really functions of all available golang basic types and each will convert a value passed to it into its own type or else return two values(zeroth value of that type and an error)
+
+ValueMorphers are cool,they are really functions of all available golang basic types and each will convert a value passed to it into its own type or else return two values(zeroth value of that type and an error)
 
         
             func ByteListMorph(a interface}) ([]byte, error) 
