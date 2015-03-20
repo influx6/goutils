@@ -6,12 +6,33 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
+	"strings"
 )
 
 var (
+	//MorphString it to transform any valid type to strings
 	MorphString = NewStringMorpher()
-	MorphByte   = NewByteMorpher()
+	//MorphByte Use it to transform any valid type to bytes
+	MorphByte = NewByteMorpher()
+	//MoreSlashes this to check for more than one forward slahes
+	MoreSlashes = regexp.MustCompile(`/+`)
 )
+
+//RemoveCurly removes '{' and '}' from any string
+func RemoveCurly(s string) string {
+	return strings.TrimPrefix(strings.TrimSuffix(s, "}"), "{")
+}
+
+//RemoveBracket removes '[' and ']' from any string
+func RemoveBracket(s string) string {
+	return strings.TrimPrefix(strings.TrimSuffix(s, "]"), "[")
+}
+
+//SplitPattern splits a pattern with the '/'
+func SplitPattern(c string) []string {
+	return strings.Split(c, "/")
+}
 
 // Equal is a helper for comparing value equality, following these rules:
 //  - Values with equivalent types are compared with reflect.DeepEqual
@@ -19,7 +40,6 @@ var (
 //    for example, Equal(int32(5), int64(5)) == true
 //  - strings and byte slices are converted to strings before comparison.
 //  - else, return false.
-
 func Equal(a, b interface{}) bool {
 	if reflect.TypeOf(a) == reflect.TypeOf(b) {
 		return reflect.DeepEqual(a, b)
@@ -54,10 +74,12 @@ func Equal(a, b interface{}) bool {
 	return false
 }
 
+//Map represents a basic generic map[interface{}]interface{} with sugar
 type Map struct {
 	internal map[interface{}]interface{}
 }
 
+//HasMatch checks if a key exists and if the value matches
 func (m *Map) HasMatch(key, value interface{}) bool {
 	k, ok := m.internal[key]
 
@@ -103,7 +125,7 @@ func (m *Map) Remove(key interface{}) {
 	delete(m.internal, key)
 }
 
-func (m *Map) Map() map[interface{}]interface{} {
+func (m *Map) ToMap() map[interface{}]interface{} {
 	return m.internal
 }
 
