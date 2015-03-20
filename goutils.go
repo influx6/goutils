@@ -91,13 +91,13 @@ func (m *Map) HasMatch(key, value interface{}) bool {
 }
 
 func (m *Map) Each(fn func(val, key interface{})) {
-	for k, v := range m.Map() {
+	for k, v := range m.ToMap() {
 		fn(v, k)
 	}
 }
 
 func (m *Map) Clone(src *Map) {
-	for k, v := range src.Map() {
+	for k, v := range src.ToMap() {
 		m.Set(k, v)
 	}
 }
