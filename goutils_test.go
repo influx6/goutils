@@ -70,7 +70,7 @@ func TestMap(t *testing.T) {
 		t.Fatalf("expecting `false` but got true", store, "day")
 	}
 
-	if isNull := store.Map(); isNull == nil {
+	if isNull := store.ToMap(); isNull == nil {
 		t.Fatalf("can convert Map type to Map", store, isNull)
 	}
 
